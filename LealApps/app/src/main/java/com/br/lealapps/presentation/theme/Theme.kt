@@ -1,4 +1,4 @@
-package com.br.lealapps.ui.theme
+package com.br.lealapps.presentation.theme
 
 import android.app.Activity
 import android.os.Build
