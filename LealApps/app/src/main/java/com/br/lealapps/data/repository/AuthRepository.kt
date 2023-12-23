@@ -1,13 +1,7 @@
 package com.br.lealapps.data.repository
 
-import com.google.firebase.auth.FirebaseUser
-
 interface AuthRepository {
-    suspend fun signIn(
-        email: String,
-        password: String,
-    ): FirebaseUser?
-
+    suspend fun signIn(email: String, password: String, callback: AuthCallback)
     suspend fun signOut()
-    suspend fun createUser(email: String, password: String): FirebaseUser?
+    suspend fun createUser(email: String, password: String, callback: AuthCallback)
 }

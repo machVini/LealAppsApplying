@@ -2,11 +2,11 @@ package com.br.lealapps.data.source.remote
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import com.br.lealapps.data.repository.AuthCallback
 import com.br.lealapps.data.repository.AuthRepository
+import com.br.lealapps.domain.model.AuthError
 import com.google.firebase.Firebase
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.tasks.await
 
@@ -14,16 +14,18 @@ class FirebaseAuthService : AuthRepository {
 
     private val firebaseAuth = Firebase.auth
 
-    override suspend fun signIn(
-        email: String,
-        password: String,
-    ): FirebaseUser? {
+    override suspend fun signIn(email: String, password: String, callback: AuthCallback) {
         try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            return result.user
+            callback.onAuthSuccess(result.user!!)
+            Log.d(TAG, "login:success:")
+        } catch (e: FirebaseAuthException) {
+            // Usuário não existe ou credenciais inválidas
+            callback.onAuthFailed(AuthError.InvalidCredentials)
         } catch (e: Exception) {
-            // Trate a exceção conforme necessário
-            return null
+            // Outro erro no login
+            callback.onAuthFailed(AuthError.OtherError)
+            Log.w(TAG,"login:error: $e")
         }
     }
 
@@ -31,15 +33,13 @@ class FirebaseAuthService : AuthRepository {
         firebaseAuth.signOut()
     }
 
-    override suspend fun createUser(email: String, password: String): FirebaseUser? {
-        return try {
-            val result: AuthResult =
-                firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-            Log.d(TAG, "createUserWithEmail:success:")
-            result.user
+    override suspend fun createUser(email: String, password: String, callback: AuthCallback) {
+        try {
+            val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            callback.onAuthSuccess(result.user!!)
+            Log.d(TAG, "createUser:success:")
         } catch (e: Exception) {
-            Log.w(TAG, "createUserWithEmail:failure: ${e.message}", e)
-            null
+            callback.onAuthFailed(AuthError.CreateUserError)
         }
     }
 }
