@@ -1,4 +1,4 @@
-package com.br.lealapps.presentation.view
+package com.br.lealapps.presentation
 
 import androidx.activity.ComponentActivity
 

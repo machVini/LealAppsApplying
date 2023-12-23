@@ -1,4 +1,4 @@
-package com.br.lealapps.presentation.view
+package com.br.lealapps.presentation
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,16 +11,24 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.br.lealapps.data.source.remote.FirebaseAuthService
-import com.br.lealapps.domain.viewmodel.AuthViewModel
-import com.br.lealapps.domain.viewmodel.AuthViewModelFactory
+import com.br.lealapps.domain.usecase.SignInUseCaseImpl
+import com.br.lealapps.domain.usecase.SignUpUseCaseImpl
+import com.br.lealapps.presentation.viewmodel.AuthViewModel
+import com.br.lealapps.presentation.viewmodel.AuthViewModelFactory
 import com.br.lealapps.presentation.screen.SignInScreen
 import com.br.lealapps.presentation.screen.SignUpScreen
 import com.br.lealapps.presentation.theme.LealAppsTheme
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : ComponentActivity() {
     private val firebaseAuthService = FirebaseAuthService()
-    private val viewModel: AuthViewModel by viewModels { AuthViewModelFactory(firebaseAuthService) }
+    private val viewModel: AuthViewModel by viewModels {
+        AuthViewModelFactory(
+            SignUpUseCaseImpl(firebaseAuthService),
+            SignInUseCaseImpl(firebaseAuthService),
+        )
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -34,11 +42,13 @@ class MainActivity : ComponentActivity() {
                 AuthViewModel.AuthenticationState.AUTHENTICATED -> {
                     val intent = Intent(this, HomeActivity::class.java)
                     startActivity(intent)
-                    finish()  // Opcional: finalize a MainActivity se desejar
+                    finish()
                 }
                 else -> {}
             }
         })
+
+        val db = FirebaseFirestore.getInstance()
     }
 }
 

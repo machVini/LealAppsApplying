@@ -1,6 +1,6 @@
 package com.br.lealapps.domain.model
 
-sealed class AuthError(val errorMessage: String) {
+sealed class AuthError(val errorMessage: String): Exception() {
     object InvalidCredentials : AuthError("Username/password incorrect")
     object OtherError : AuthError("Could not authenticate you. Try again later")
     object CreateUserError : AuthError("Error to create an user")
