@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".presentation.view.HomeActivity"
+            android:label="Home"
+            android:theme="@style/Theme.LealApps" />
     </application>
 
 </manifest>

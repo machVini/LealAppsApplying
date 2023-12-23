@@ -17,22 +17,22 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _authenticatedUser = MutableLiveData<FirebaseUser?>()
     val authenticatedUser: LiveData<FirebaseUser?> = _authenticatedUser
 
-    private val _loginStatus = MutableLiveData<LoginStatus>()
-    val loginStatus: LiveData<LoginStatus> = _loginStatus
+    private val _authenticationState = MutableLiveData(AuthenticationState.NOT_LOGGED)
+    val authenticationState: LiveData<AuthenticationState> get() = _authenticationState
 
     private val _authError = MutableLiveData<AuthError?>()
     val authError: LiveData<AuthError?> = _authError
 
-    enum class LoginStatus {
-        SUCCESS, // Login bem-sucedido
-        INVALID_CREDENTIALS, // Credenciais inválidas (por exemplo, senha incorreta)
-        ERROR // Outro erro no login
+    enum class AuthenticationState {
+        AUTHENTICATED,
+        NOT_LOGGED,
     }
 
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             authRepository.signIn(email, password, object : AuthCallback {
                 override fun onAuthSuccess(user: FirebaseUser) {
+                    _authenticationState.value = AuthenticationState.AUTHENTICATED
                     _authenticatedUser.value = user
                     _authError.value = null  // Limpa o estado de erro em caso de sucesso
                 }
@@ -49,6 +49,7 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             withContext(Dispatchers.IO) {
                 authRepository.signOut()
             }
+            _authenticationState.value = AuthenticationState.NOT_LOGGED
             _authenticatedUser.value = null
         }
     }
@@ -58,6 +59,7 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             viewModelScope.launch {
                 authRepository.createUser(email, password, object : AuthCallback {
                     override fun onAuthSuccess(user: FirebaseUser) {
+                        _authenticationState.value = AuthenticationState.AUTHENTICATED
                         _authenticatedUser.value = user
                         _authError.value = null
                     }
