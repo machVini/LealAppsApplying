@@ -1,12 +1,22 @@
 package com.br.lealapps.data.source.model
 
 import com.google.firebase.firestore.DocumentReference
-import java.sql.Timestamp
+import com.google.firebase.firestore.PropertyName
+import kotlinx.parcelize.RawValue
+import java.util.Date
+
 
 data class Treino(
-    val nome: Int,
-    val descricao: String,
-    val data: Timestamp,
-    val exercicios: List<DocumentReference> // Lista de referências para exercícios
+    @PropertyName("nome")
+    var nome: String = "",
+
+    @PropertyName("descricao")
+    var descricao: String = "",
+
+    @PropertyName("data")
+    var data: Date? = null,
+
+    @PropertyName("exercicios")
+    var exercicios: @RawValue List<DocumentReference> = emptyList()
 )
 

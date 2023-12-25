@@ -1,11 +1,14 @@
 package com.br.lealapps.presentation.viewmodel
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.br.lealapps.data.source.model.Exercicio
 import com.br.lealapps.data.source.model.Treino
+import com.br.lealapps.domain.mapper.DocumentReferenceToExercicioMapper
 import com.br.lealapps.domain.model.RepositoryResult
 import com.br.lealapps.domain.usecase.AddExercicioUseCase
 import com.br.lealapps.domain.usecase.AddTreinoUseCase
@@ -15,6 +18,12 @@ import com.br.lealapps.domain.usecase.GetExerciciosUseCase
 import com.br.lealapps.domain.usecase.GetTreinosUseCase
 import com.br.lealapps.domain.usecase.UpdateExercicioUseCase
 import com.br.lealapps.domain.usecase.UpdateTreinoUseCase
+import com.google.firebase.firestore.DocumentReference
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -25,26 +34,41 @@ class HomeViewModel(
     private val addExercicioUseCase: AddExercicioUseCase,
     private val getExerciciosUseCase: GetExerciciosUseCase,
     private val updateExercicioUseCase: UpdateExercicioUseCase,
-    private val deleteExercicioUseCase: DeleteExercicioUseCase
+    private val deleteExercicioUseCase: DeleteExercicioUseCase,
+    private val documentReferenceToExercicioMapper: DocumentReferenceToExercicioMapper,
 ) : ViewModel() {
     private val _treinos = MutableLiveData<List<Treino>>()
     val treinos: LiveData<List<Treino>> get() = _treinos
     private val _exercicios = MutableLiveData<List<Exercicio>>()
     val exercicios: LiveData<List<Exercicio>> get() = _exercicios
+    private val _exerciciosState = MutableStateFlow<List<Exercicio>>(emptyList())
 
+    val exerciciosState: StateFlow<List<Exercicio>> = _exerciciosState.asStateFlow()
+
+    init {
+        loadExercicios()
+        loadTreinos()
+    }
+
+    fun setExerciciosState(exercicios: List<Exercicio>) {
+        _exerciciosState.value = exercicios
+    }
 
     fun addTreino(treino: Treino) {
         viewModelScope.launch {
-            addTreinoUseCase(treino)
-            loadTreinos()
+            when (val result = addTreinoUseCase(treino)) {
+                is RepositoryResult.Success -> loadTreinos()
+                is RepositoryResult.Error -> Log.e(TAG, "Error adding treino", result.exception)
+            }
         }
     }
 
     fun loadTreinos() {
         viewModelScope.launch {
-            val result = getTreinosUseCase()
-            if (result is RepositoryResult.Success)
-                _treinos.value = result.data
+            when (val result = getTreinosUseCase()) {
+                is RepositoryResult.Success -> _treinos.value = result.data
+                is RepositoryResult.Error -> Log.e(TAG, "Error loading treinos", result.exception)
+            }
         }
     }
 
@@ -55,32 +79,45 @@ class HomeViewModel(
         }
     }
 
-    fun deleteTreino(treinoId: Int) {
+    fun deleteTreino(treinoName: String) {
         viewModelScope.launch {
-            deleteTreinoUseCase(treinoId)
+            deleteTreinoUseCase(treinoName)
             loadTreinos()
         }
     }
 
     fun addExercicio(exercicio: Exercicio) {
         viewModelScope.launch {
-            addExercicioUseCase(exercicio)
-            loadExercicios()
+            when (val result = addExercicioUseCase(exercicio)) {
+                is RepositoryResult.Success -> loadExercicios()
+                is RepositoryResult.Error -> Log.e(TAG, "Error adding exercicio", result.exception)
+            }
         }
     }
 
     fun loadExercicios() {
         viewModelScope.launch {
-            val result = getExerciciosUseCase()
-            if (result is RepositoryResult.Success)
-                _exercicios.value = result.data
+            when (val result = getExerciciosUseCase()) {
+                is RepositoryResult.Success -> _exercicios.value = result.data
+                is RepositoryResult.Error -> Log.e(
+                    TAG,
+                    "Error loading exercicios",
+                    result.exception
+                )
+            }
         }
     }
 
     fun updateExercicio(exercicio: Exercicio) {
         viewModelScope.launch {
-            updateExercicioUseCase(exercicio)
-            loadExercicios()
+            when (val result = updateExercicioUseCase(exercicio)) {
+                is RepositoryResult.Success -> loadExercicios() // Recarregar a lista após atualizar
+                is RepositoryResult.Error -> Log.e(
+                    TAG,
+                    "Error updating exercicio",
+                    result.exception
+                )
+            }
         }
     }
 
@@ -89,5 +126,27 @@ class HomeViewModel(
             deleteExercicioUseCase(exercicioId)
             loadExercicios()
         }
+    }
+
+    fun mapDocRefToExercise(docRef: DocumentReference): Flow<Exercicio?> {
+        return flow {
+            val exercicio = documentReferenceToExercicioMapper.mapFrom(docRef)
+            emit(exercicio)
+        }
+    }
+
+    suspend fun mapListDocumentReferencesToExercicios(documentReferences: List<DocumentReference>): List<Exercicio> {
+        val exerciciosList = mutableListOf<Exercicio>()
+
+        for (documentReference in documentReferences) {
+            val exercicio = documentReferenceToExercicioMapper.mapFrom(documentReference)
+            exercicio?.let { exerciciosList.add(it) }
+        }
+
+        return exerciciosList
+    }
+
+    fun getTreinoByName(treinoName: String): Treino? {
+        return _treinos.value?.find { it.nome == treinoName }
     }
 }

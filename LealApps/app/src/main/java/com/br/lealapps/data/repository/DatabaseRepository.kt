@@ -8,7 +8,7 @@ interface DatabaseRepository {
     suspend fun addTreino(treino: Treino): RepositoryResult<Unit>
     suspend fun getTreinos(): RepositoryResult<List<Treino>>
     suspend fun updateTreino(treino: Treino): RepositoryResult<Unit>
-    suspend fun deleteTreino(treinoId: Int): RepositoryResult<Unit>
+    suspend fun deleteTreino(treinoName: String): RepositoryResult<Unit>
     suspend fun addExercicio(exercicio: Exercicio): RepositoryResult<Unit>
     suspend fun getExercicios(): RepositoryResult<List<Exercicio>>
     suspend fun updateExercicio(exercicio: Exercicio): RepositoryResult<Unit>

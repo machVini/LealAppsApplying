@@ -34,16 +34,16 @@ class FirestoreDatabaseService(private val firestore: FirebaseFirestore) : Datab
 
     override suspend fun updateTreino(treino: Treino): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Treino").document(treino.nome.toString()).set(treino).await()
+            firestore.collection("Treino").document(treino.nome).set(treino).await()
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
             RepositoryResult.Error(e)
         }
     }
 
-    override suspend fun deleteTreino(treinoId: Int): RepositoryResult<Unit> {
+    override suspend fun deleteTreino(treinoName: String): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Treino").document(treinoId.toString()).delete().await()
+            firestore.collection("Treino").document(treinoName).delete().await()
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
             RepositoryResult.Error(e)
@@ -90,5 +90,4 @@ class FirestoreDatabaseService(private val firestore: FirebaseFirestore) : Datab
             RepositoryResult.Error(e)
         }
     }
-
 }
