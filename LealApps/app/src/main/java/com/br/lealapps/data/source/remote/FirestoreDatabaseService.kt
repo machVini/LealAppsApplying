@@ -43,12 +43,26 @@ class FirestoreDatabaseService(private val firestore: FirebaseFirestore) : Datab
 
     override suspend fun deleteTreino(treinoName: String): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Treino").document(treinoName).delete().await()
+            val querySnapshot = firestore.collection("Treino")
+                .whereEqualTo("nome", treinoName)
+                .get()
+                .await()
+
+            if (!querySnapshot.isEmpty) {
+                val documentReference = querySnapshot.documents[0].reference
+                documentReference.delete().await()
+                Log.d(TAG, "Treino deleted successfully.")
+            } else {
+                Log.d(TAG, "Treino not found for excluding.")
+            }
+
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
+            Log.e(TAG, "Error deleting treino: $treinoName", e)
             RepositoryResult.Error(e)
         }
     }
+
 
     override suspend fun addExercicio(exercicio: Exercicio): RepositoryResult<Unit> {
         return try {
@@ -82,11 +96,24 @@ class FirestoreDatabaseService(private val firestore: FirebaseFirestore) : Datab
         }
     }
 
-    override suspend fun deleteExercicio(exercicioId: String): RepositoryResult<Unit> {
+    override suspend fun deleteExercicio(exercicioName: String): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Exercicio").document(exercicioId).delete().await()
+            val querySnapshot = firestore.collection("Exercicio")
+                .whereEqualTo("nome", exercicioName)
+                .get()
+                .await()
+
+            if (!querySnapshot.isEmpty) {
+                val documentReference = querySnapshot.documents[0].reference
+                documentReference.delete().await()
+                Log.d(TAG, "Exercicio deleted successfully.")
+            } else {
+                Log.d(TAG, "Exercicio not found for excluding.")
+            }
+
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
+            Log.e(TAG, "Error deleting exercicio: $exercicioName", e)
             RepositoryResult.Error(e)
         }
     }

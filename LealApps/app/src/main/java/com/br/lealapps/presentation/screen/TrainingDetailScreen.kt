@@ -12,10 +12,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -38,9 +47,12 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.br.lealapps.data.source.model.Exercicio
 import com.br.lealapps.data.source.model.Treino
+import com.br.lealapps.domain.utils.toTreinoDetailData
 import com.br.lealapps.presentation.screen.common.CommonNavigationBar
+import com.br.lealapps.presentation.screen.common.ComposableAlertExclusion
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
 import kotlinx.datetime.DayOfWeek
+import java.util.Date
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,6 +62,10 @@ fun TrainingDetailScreen(
     viewModel: HomeViewModel,
     treino: Treino,
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    var canBack by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,15 +76,39 @@ fun TrainingDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { navController.navigate("addExerciseScreen") }) {
-                        Icon(imageVector = Icons.Default.Menu, contentDescription = "Options")
+                    IconButton(onClick = { expanded = true }) {
+                        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
                     }
-//                    IconButton(onClick = { navController.navigate("editTrainingScreen") }) {
-//                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit")
-//                    }
-//                    IconButton(onClick = { viewModel.deleteTreino(treino.nome) }) {
-//                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
-//                    }
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                    ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                expanded = false
+                            },
+                            text = { Text(text = "Editar Treino") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Editar Treino"
+                                )
+                            }
+                        )
+                        DropdownMenuItem(
+                            onClick = {
+                                expanded = false
+                                showDialog = true
+                            },
+                            text = { Text(text = "Apagar Treino") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Apagar Treino"
+                                )
+                            }
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -83,6 +123,22 @@ fun TrainingDetailScreen(
         },
         bottomBar = { CommonNavigationBar(navController = navController) },
     )
+
+    if (showDialog)
+        ComposableAlertExclusion(
+            setShowDialog = { showDialog = it },
+            title = "Apagar treino",
+            subtitle = "Tem certeza que deseja deletar o treino?",
+            onConfirmButton = {
+                viewModel.deleteTreino(treino.nome)
+                canBack = true
+            }
+        )
+
+    if (canBack){
+        canBack = false
+        navController.popBackStack()
+    }
 }
 
 @Composable
@@ -102,10 +158,10 @@ fun TreinoDetailInfoItem(treino: Treino, viewModel: HomeViewModel) {
                 fontSize = 18.sp,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Muscles: ${treino.descricao}", fontSize = 14.sp)
+            Text(text = "Descricão: ${treino.descricao}", fontSize = 14.sp)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Day: ${DayOfWeek(treino.data?.day!!)} - ${treino.data?.toLocaleString()}",
+                text = treino.data.toTreinoDetailData(),
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(4.dp))

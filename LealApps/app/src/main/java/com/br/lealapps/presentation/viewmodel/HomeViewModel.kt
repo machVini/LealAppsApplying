@@ -67,7 +67,7 @@ class HomeViewModel(
     fun loadTreinos() {
         viewModelScope.launch {
             when (val result = getTreinosUseCase()) {
-                is RepositoryResult.Success -> _treinos.value = result.data.sortedBy { it.data?.day }
+                is RepositoryResult.Success -> _treinos.value = result.data.sortedBy { it.data }
                 is RepositoryResult.Error -> Log.e(TAG, "Error loading treinos", result.exception)
             }
         }
@@ -99,7 +99,7 @@ class HomeViewModel(
     fun loadExercicios() {
         viewModelScope.launch {
             when (val result = getExerciciosUseCase()) {
-                is RepositoryResult.Success -> _exercicios.value = result.data.sortedBy { it.nome }
+                is RepositoryResult.Success -> _exercicios.value = result.data.sortedBy { it.nome.uppercase() }
                 is RepositoryResult.Error -> Log.e(
                     TAG,
                     "Error loading exercicios",
