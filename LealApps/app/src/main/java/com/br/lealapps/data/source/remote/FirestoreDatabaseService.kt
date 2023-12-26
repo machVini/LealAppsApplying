@@ -74,7 +74,7 @@ class FirestoreDatabaseService(private val firestore: FirebaseFirestore) : Datab
 
     override suspend fun updateExercicio(exercicio: Exercicio): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Exercicio").document(exercicio.nome.toString()).set(exercicio)
+            firestore.collection("Exercicio").document(exercicio.nome).set(exercicio)
                 .await()
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
@@ -82,9 +82,9 @@ class FirestoreDatabaseService(private val firestore: FirebaseFirestore) : Datab
         }
     }
 
-    override suspend fun deleteExercicio(exercicioId: Int): RepositoryResult<Unit> {
+    override suspend fun deleteExercicio(exercicioId: String): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Exercicio").document(exercicioId.toString()).delete().await()
+            firestore.collection("Exercicio").document(exercicioId).delete().await()
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
             RepositoryResult.Error(e)

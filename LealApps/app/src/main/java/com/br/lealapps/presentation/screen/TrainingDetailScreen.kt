@@ -1,6 +1,7 @@
 package com.br.lealapps.presentation.screen
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,27 +10,35 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
 import com.br.lealapps.data.source.model.Exercicio
 import com.br.lealapps.data.source.model.Treino
+import com.br.lealapps.presentation.screen.common.CommonNavigationBar
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
 import kotlinx.datetime.DayOfWeek
 
@@ -61,6 +70,12 @@ fun TrainingDetailScreen(
 //                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
 //                    }
                 },
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.primary,
+                    actionIconContentColor = MaterialTheme.colorScheme.primary,
+                ),
             )
         },
         content = {
@@ -93,7 +108,7 @@ fun TreinoDetailInfoItem(treino: Treino, viewModel: HomeViewModel) {
                 text = "Day: ${DayOfWeek(treino.data?.day!!)} - ${treino.data?.toLocaleString()}",
                 fontSize = 14.sp
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             LaunchedEffect(viewModel) {
                 val exerciciosState: List<Exercicio> =
@@ -120,17 +135,21 @@ fun TrainingDetailExerciciosList(exercicios: List<Exercicio>, viewModel: HomeVie
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun TrainingDetailExercicioItem(exercicio: Exercicio, onExercicioClick: (Exercicio) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
             .clickable { onExercicioClick(exercicio) }
     ) {
+        Spacer(modifier = Modifier.height(12.dp))
+        Divider(color = MaterialTheme.colorScheme.primary, thickness = 1.dp)
+        Spacer(modifier = Modifier.height(12.dp))
         Column {
             Text(
-                text = "Nome: ${exercicio.nome}",
+                text = exercicio.nome,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
             )
@@ -139,6 +158,17 @@ fun TrainingDetailExercicioItem(exercicio: Exercicio, onExercicioClick: (Exercic
             //Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Obs: ${exercicio.observacoes}", fontSize = 14.sp)
             Spacer(modifier = Modifier.height(8.dp))
+            exercicio.imagem.let { imageUrl ->
+                val painter = rememberImagePainter(imageUrl)
+                Image(
+                    painter = painter,
+                    contentDescription = "Imagem do exercício",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+            }
         }
     }
 }

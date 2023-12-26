@@ -19,11 +19,9 @@ import com.br.lealapps.domain.usecase.GetTreinosUseCase
 import com.br.lealapps.domain.usecase.UpdateExercicioUseCase
 import com.br.lealapps.domain.usecase.UpdateTreinoUseCase
 import com.google.firebase.firestore.DocumentReference
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -37,17 +35,20 @@ class HomeViewModel(
     private val deleteExercicioUseCase: DeleteExercicioUseCase,
     private val documentReferenceToExercicioMapper: DocumentReferenceToExercicioMapper,
 ) : ViewModel() {
-    private val _treinos = MutableLiveData<List<Treino>>()
-    val treinos: LiveData<List<Treino>> get() = _treinos
+    private val _treinos = MutableStateFlow<List<Treino>>(emptyList())
+    val treinos: StateFlow<List<Treino>> = _treinos
+
     private val _exercicios = MutableLiveData<List<Exercicio>>()
     val exercicios: LiveData<List<Exercicio>> get() = _exercicios
-    private val _exerciciosState = MutableStateFlow<List<Exercicio>>(emptyList())
 
+    private val _exerciciosState = MutableStateFlow<List<Exercicio>>(emptyList())
     val exerciciosState: StateFlow<List<Exercicio>> = _exerciciosState.asStateFlow()
 
     init {
-        loadExercicios()
-        loadTreinos()
+        viewModelScope.launch {
+            loadTreinos()
+            loadExercicios()
+        }
     }
 
     fun setExerciciosState(exercicios: List<Exercicio>) {
@@ -66,7 +67,7 @@ class HomeViewModel(
     fun loadTreinos() {
         viewModelScope.launch {
             when (val result = getTreinosUseCase()) {
-                is RepositoryResult.Success -> _treinos.value = result.data
+                is RepositoryResult.Success -> _treinos.value = result.data.sortedBy { it.data?.day }
                 is RepositoryResult.Error -> Log.e(TAG, "Error loading treinos", result.exception)
             }
         }
@@ -98,7 +99,7 @@ class HomeViewModel(
     fun loadExercicios() {
         viewModelScope.launch {
             when (val result = getExerciciosUseCase()) {
-                is RepositoryResult.Success -> _exercicios.value = result.data
+                is RepositoryResult.Success -> _exercicios.value = result.data.sortedBy { it.nome }
                 is RepositoryResult.Error -> Log.e(
                     TAG,
                     "Error loading exercicios",
@@ -121,17 +122,10 @@ class HomeViewModel(
         }
     }
 
-    fun deleteExercicio(exercicioId: Int) {
+    fun deleteExercicio(exercicioName: String) {
         viewModelScope.launch {
-            deleteExercicioUseCase(exercicioId)
+            deleteExercicioUseCase(exercicioName)
             loadExercicios()
-        }
-    }
-
-    fun mapDocRefToExercise(docRef: DocumentReference): Flow<Exercicio?> {
-        return flow {
-            val exercicio = documentReferenceToExercicioMapper.mapFrom(docRef)
-            emit(exercicio)
         }
     }
 
