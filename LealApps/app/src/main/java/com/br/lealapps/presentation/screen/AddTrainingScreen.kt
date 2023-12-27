@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -39,9 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.br.lealapps.domain.model.Exercicio
 import com.br.lealapps.domain.model.Treino
+import com.br.lealapps.domain.utils.toBrazilianDate
+import com.br.lealapps.domain.utils.toBrazilianDateFormat
 import com.br.lealapps.presentation.screen.common.CommonNavigationBar
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
-import java.util.Date
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,8 +87,11 @@ fun AddingTraining(
     var descricao by remember { mutableStateOf("") }
     var data by remember { mutableStateOf("") }
     var exerciciosSelecionados by remember { mutableStateOf(emptyList<Exercicio>()) }
-
     val context = LocalContext.current
+    var showDatePickerDialog by remember {
+        mutableStateOf(false)
+    }
+    val datePickerState = rememberDatePickerState()
 
     Column(
         modifier = Modifier
@@ -111,16 +118,37 @@ fun AddingTraining(
                 .padding(vertical = 8.dp)
         )
 
-        // Campo de Data do Treino
+        if (showDatePickerDialog) {
+            DatePickerDialog(
+                onDismissRequest = { showDatePickerDialog = false },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            datePickerState
+                                .selectedDateMillis?.let { millis ->
+                                    data = millis.toBrazilianDateFormat()
+                                }
+                            showDatePickerDialog = false
+                        }) {
+                        Text(text = "Escolher data")
+                    }
+                }) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
         OutlinedTextField(
             value = data,
-            onValueChange = { data = it },
+            onValueChange = { },
             label = { Text("Data do Treino") },
             trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.DateRange,
-                    contentDescription = "Data do Treino"
-                )
+                IconButton(onClick = { showDatePickerDialog = !showDatePickerDialog }) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Data do Treino"
+                    )
+                }
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -169,7 +197,14 @@ fun AddingTraining(
         }
         Button(
             onClick = {
-                viewModel.addTreino(Treino(nome, descricao, Date(data), exerciciosSelecionados))
+                viewModel.addTreino(
+                    Treino(
+                        nome = nome,
+                        descricao = descricao,
+                        data = data.toBrazilianDate(),
+                        exercicios = exerciciosSelecionados
+                    )
+                )
                 hideKeyboard(context = context)
                 navController.popBackStack()
             },
