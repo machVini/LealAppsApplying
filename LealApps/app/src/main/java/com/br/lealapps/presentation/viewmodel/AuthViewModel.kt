@@ -29,7 +29,7 @@ class AuthViewModel (
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             try {
-                val result = signInUseCase("teste@teste.com", "123456")
+                val result = signInUseCase(email, password)
                 when (result) {
                     is RepositoryResult.Success -> {
                         _authenticatedUser.value = result.data

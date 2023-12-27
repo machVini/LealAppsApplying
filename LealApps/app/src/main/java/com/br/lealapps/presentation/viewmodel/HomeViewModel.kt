@@ -128,6 +128,6 @@ class HomeViewModel (
     }
 
     fun getTreinoByName(treinoName: String): Treino? {
-        return _treinos.value?.find { it.nome == treinoName }
+        return _treinos.value.find { it.nome == treinoName }
     }
 }
