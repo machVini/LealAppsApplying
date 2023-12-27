@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -54,15 +53,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.br.lealapps.R
-import com.br.lealapps.domain.viewmodel.AuthViewModel
+import com.br.lealapps.presentation.viewmodel.AuthViewModel
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
-    val user = viewModel.authenticatedUser.observeAsState()
 
     val context = LocalContext.current
 
@@ -155,10 +153,9 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
                     .padding(bottom = 16.dp)
             )
 
-            // Botão de login
             Button(
                 onClick = {
-                    viewModel.signIn(email, password)
+                    viewModel.signIn(email.trim(), password)
                     hideKeyboard(context = context)
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -168,7 +165,6 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
                 Text("Sign In")
             }
 
-            // Link para criação de conta
             val annotatedString = buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("Não tem uma conta? ")

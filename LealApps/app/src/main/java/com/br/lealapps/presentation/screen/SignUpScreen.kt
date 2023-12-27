@@ -52,7 +52,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.br.lealapps.R
-import com.br.lealapps.domain.viewmodel.AuthViewModel
+import com.br.lealapps.presentation.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
