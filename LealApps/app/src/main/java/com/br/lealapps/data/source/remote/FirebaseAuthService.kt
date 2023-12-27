@@ -1,17 +1,15 @@
 package com.br.lealapps.data.source.remote
 
-import com.br.lealapps.data.repository.AuthRepository
-import com.br.lealapps.domain.model.AuthError
-import com.br.lealapps.domain.model.RepositoryResult
-import com.google.firebase.Firebase
+import com.br.lealapps.data.source.model.error.AuthError
+import com.br.lealapps.data.source.model.result.RepositoryResult
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import kotlinx.coroutines.tasks.await
 
-class FirebaseAuthService : AuthRepository {
-
-    private val firebaseAuth = Firebase.auth
+class FirebaseAuthService (
+    private val firebaseAuth: FirebaseAuth
+) : AuthDataSource {
 
     override suspend fun signIn(email: String, password: String): RepositoryResult<FirebaseUser> {
         return try {
@@ -29,7 +27,10 @@ class FirebaseAuthService : AuthRepository {
         firebaseAuth.signOut()
     }
 
-    override suspend fun createUser(email: String, password: String): RepositoryResult<FirebaseUser> {
+    override suspend fun createUser(
+        email: String,
+        password: String
+    ): RepositoryResult<FirebaseUser> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             RepositoryResult.Success(result.user!!)

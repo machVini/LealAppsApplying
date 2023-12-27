@@ -42,12 +42,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.br.lealapps.data.source.model.Treino
+import com.br.lealapps.domain.model.Treino
 import com.br.lealapps.domain.utils.toTreinoDetailData
 import com.br.lealapps.presentation.screen.common.CommonNavigationBar
 import com.br.lealapps.presentation.screen.common.ComposableAlertExclusion
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
-import kotlinx.datetime.DayOfWeek
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

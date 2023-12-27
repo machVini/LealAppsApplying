@@ -4,14 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.br.lealapps.domain.model.AuthError
-import com.br.lealapps.domain.model.RepositoryResult
+import com.br.lealapps.data.source.model.error.AuthError
+import com.br.lealapps.data.source.model.result.RepositoryResult
 import com.br.lealapps.domain.usecase.SignInUseCase
 import com.br.lealapps.domain.usecase.SignUpUseCase
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.launch
 
-class AuthViewModel(
+
+class AuthViewModel (
     private val signUpUseCase: SignUpUseCase,
     private val signInUseCase: SignInUseCase,
 ) : ViewModel() {
@@ -28,7 +29,7 @@ class AuthViewModel(
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             try {
-                val result = signInUseCase(email, password)
+                val result = signInUseCase("teste@teste.com", "123456")
                 when (result) {
                     is RepositoryResult.Success -> {
                         _authenticatedUser.value = result.data

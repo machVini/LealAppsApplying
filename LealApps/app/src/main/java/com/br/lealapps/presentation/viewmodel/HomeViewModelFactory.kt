@@ -2,7 +2,6 @@ package com.br.lealapps.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.br.lealapps.domain.mapper.DocumentReferenceToExercicioMapper
 import com.br.lealapps.domain.usecase.AddExercicioUseCase
 import com.br.lealapps.domain.usecase.AddTreinoUseCase
 import com.br.lealapps.domain.usecase.DeleteExercicioUseCase
@@ -21,7 +20,6 @@ class HomeViewModelFactory(
     private val getExerciciosUseCase: GetExerciciosUseCase,
     private val updateExercicioUseCase: UpdateExercicioUseCase,
     private val deleteExercicioUseCase: DeleteExercicioUseCase,
-    private val documentReferenceToExercicioMapper: DocumentReferenceToExercicioMapper,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
@@ -35,7 +33,6 @@ class HomeViewModelFactory(
                 getExerciciosUseCase,
                 updateExercicioUseCase,
                 deleteExercicioUseCase,
-                documentReferenceToExercicioMapper,
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

@@ -1,13 +1,15 @@
 package com.br.lealapps.domain.usecase
 
 import com.br.lealapps.data.repository.AuthRepository
-import com.br.lealapps.domain.model.RepositoryResult
+import com.br.lealapps.data.source.model.result.RepositoryResult
 import com.google.firebase.auth.FirebaseUser
 
-class SignUpUseCaseImpl(private val authRepository: AuthRepository): SignUpUseCase {
+class SignUpUseCaseImpl (
+    private val repository: AuthRepository
+): SignUpUseCase {
     override suspend operator fun invoke(email: String, password: String): RepositoryResult<FirebaseUser> {
         return try {
-            val result = authRepository.createUser(email, password)
+            val result = repository.createUser(email, password)
 
             when (result) {
                 is RepositoryResult.Success -> RepositoryResult.Success(result.data)

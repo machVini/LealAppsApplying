@@ -1,4 +1,4 @@
-package com.br.lealapps.data.source.model
+package com.br.lealapps.domain.model
 
 data class Exercicio(
     val nome: String = "",

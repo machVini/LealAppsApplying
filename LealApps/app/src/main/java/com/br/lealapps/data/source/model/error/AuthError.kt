@@ -1,4 +1,4 @@
-package com.br.lealapps.domain.model
+package com.br.lealapps.data.source.model.error
 
 sealed class AuthError(val errorMessage: String): Exception() {
     object InvalidCredentials : AuthError("Username/password incorrect")

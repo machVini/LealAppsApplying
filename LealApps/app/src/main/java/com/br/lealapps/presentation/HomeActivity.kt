@@ -4,8 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.br.lealapps.data.source.remote.FirestoreDatabaseService
-import com.br.lealapps.domain.mapper.DocumentReferenceToExercicioMapperImpl
+import com.br.lealapps.data.repository.FirestoreFitnessRepository
+import com.br.lealapps.data.source.remote.FirestoreFitnessService
+import com.br.lealapps.domain.mapper.FitnessResponseMapperImpl
 import com.br.lealapps.domain.usecase.AddExercicioUseCaseImpl
 import com.br.lealapps.domain.usecase.AddTreinoUseCaseImpl
 import com.br.lealapps.domain.usecase.DeleteExercicioUseCaseImpl
@@ -20,18 +21,21 @@ import com.br.lealapps.presentation.viewmodel.HomeViewModelFactory
 import com.google.firebase.firestore.FirebaseFirestore
 
 class HomeActivity : ComponentActivity() {
-    private val firestoreDatabaseService = FirestoreDatabaseService(FirebaseFirestore.getInstance())
+
+    private val repository = FirestoreFitnessRepository(
+        dataSource = FirestoreFitnessService(FirebaseFirestore.getInstance()),
+        fitnessResponseMapper = FitnessResponseMapperImpl()
+    )
     private val viewModel: HomeViewModel by viewModels {
         HomeViewModelFactory(
-            addTreinoUseCase = AddTreinoUseCaseImpl(firestoreDatabaseService),
-            getTreinosUseCase = GetTreinosUseCaseImpl(firestoreDatabaseService),
-            updateTreinoUseCase = UpdateTreinoUseCaseImpl(firestoreDatabaseService),
-            deleteTreinoUseCase = DeleteTreinoUseCaseImpl(firestoreDatabaseService),
-            addExercicioUseCase = AddExercicioUseCaseImpl(firestoreDatabaseService),
-            getExerciciosUseCase = GetExerciciosUseCaseImpl(firestoreDatabaseService),
-            updateExercicioUseCase = UpdateExercicioUseCaseImpl(firestoreDatabaseService),
-            deleteExercicioUseCase = DeleteExercicioUseCaseImpl(firestoreDatabaseService),
-            documentReferenceToExercicioMapper = DocumentReferenceToExercicioMapperImpl(),
+            addTreinoUseCase = AddTreinoUseCaseImpl(repository),
+            getTreinosUseCase = GetTreinosUseCaseImpl(repository),
+            updateTreinoUseCase = UpdateTreinoUseCaseImpl(repository),
+            deleteTreinoUseCase = DeleteTreinoUseCaseImpl(repository),
+            addExercicioUseCase = AddExercicioUseCaseImpl(repository),
+            getExerciciosUseCase = GetExerciciosUseCaseImpl(repository),
+            updateExercicioUseCase = UpdateExercicioUseCaseImpl(repository),
+            deleteExercicioUseCase = DeleteExercicioUseCaseImpl(repository),
         )
     }
 

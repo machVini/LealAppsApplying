@@ -55,7 +55,7 @@ import androidx.navigation.NavController
 import com.br.lealapps.R
 import com.br.lealapps.presentation.viewmodel.AuthViewModel
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
