@@ -12,11 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
@@ -45,14 +43,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.br.lealapps.data.source.model.Exercicio
-import com.br.lealapps.data.source.model.Treino
+import com.br.lealapps.domain.model.Exercicio
+import com.br.lealapps.domain.model.Treino
 import com.br.lealapps.domain.utils.toTreinoDetailData
 import com.br.lealapps.presentation.screen.common.CommonNavigationBar
 import com.br.lealapps.presentation.screen.common.ComposableAlertExclusion
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
-import kotlinx.datetime.DayOfWeek
-import java.util.Date
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -135,7 +131,7 @@ fun TrainingDetailScreen(
             }
         )
 
-    if (canBack){
+    if (canBack) {
         canBack = false
         navController.popBackStack()
     }
@@ -166,13 +162,7 @@ fun TreinoDetailInfoItem(treino: Treino, viewModel: HomeViewModel) {
             )
             Spacer(modifier = Modifier.height(4.dp))
 
-            LaunchedEffect(viewModel) {
-                val exerciciosState: List<Exercicio> =
-                    viewModel.mapListDocumentReferencesToExercicios(treino.exercicios)
-
-                viewModel.setExerciciosState(exerciciosState)
-            }
-
+            viewModel.setExerciciosState(treino.exercicios)
             val exerciciosState: List<Exercicio> by viewModel.exerciciosState.collectAsState(initial = emptyList())
             TrainingDetailExerciciosList(exerciciosState, viewModel)
         }

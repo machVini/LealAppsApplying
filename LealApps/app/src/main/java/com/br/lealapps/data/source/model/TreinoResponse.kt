@@ -6,7 +6,7 @@ import kotlinx.parcelize.RawValue
 import java.util.Date
 
 
-data class Treino(
+data class TreinoResponse(
     @PropertyName("nome")
     var nome: String = "",
 

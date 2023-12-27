@@ -34,8 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.br.lealapps.data.source.model.Exercicio
-import com.br.lealapps.data.source.model.Treino
+import com.br.lealapps.domain.model.Exercicio
+import com.br.lealapps.domain.model.Treino
 import com.br.lealapps.presentation.screen.common.CommonNavigationBar
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
 import java.util.Date
@@ -45,7 +45,9 @@ import java.util.Date
 @Composable
 fun AddTrainingScreen(navController: NavController, viewModel: HomeViewModel) {
     val exercicios by viewModel.exercicios.observeAsState(emptyList())
-
+    val treinoToAdd by remember {
+        mutableStateOf(Treino())
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,14 +66,14 @@ fun AddTrainingScreen(navController: NavController, viewModel: HomeViewModel) {
             )
         },
         content = {
-            AddingTraining(exercicios = exercicios, viewModel = viewModel)
+            AddingTraining(exercicios = exercicios, viewModel = viewModel, treinoToAdd = treinoToAdd)
         },
         bottomBar = { CommonNavigationBar(navController = navController) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    //viewModel.addTreino(treinoToAdd)
-                    navController.popBackStack()
+                    viewModel.addTreino(treinoToAdd)
+                    //navController.popBackStack()
                 },
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = MaterialTheme.colorScheme.primary,
@@ -85,10 +87,7 @@ fun AddTrainingScreen(navController: NavController, viewModel: HomeViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddingTraining(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
-    var nome by remember { mutableStateOf("") }
-    var descricao by remember { mutableStateOf("") }
-    var data by remember { mutableStateOf("") }
+fun AddingTraining(exercicios: List<Exercicio>, viewModel: HomeViewModel, treinoToAdd: Treino) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -96,8 +95,8 @@ fun AddingTraining(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
     ) {
         // Campo de Nome do Treino
         OutlinedTextField(
-            value = nome,
-            onValueChange = { nome = it },
+            value = treinoToAdd.nome,
+            onValueChange = { treinoToAdd.nome = it },
             label = { Text("Nome do Treino") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -106,8 +105,8 @@ fun AddingTraining(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
 
         // Campo de Descrição do Treino
         OutlinedTextField(
-            value = descricao,
-            onValueChange = { descricao = it },
+            value = treinoToAdd.descricao,
+            onValueChange = { treinoToAdd.descricao = it },
             label = { Text("Descrição do Treino") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -116,8 +115,8 @@ fun AddingTraining(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
 
         // Campo de Data do Treino
         OutlinedTextField(
-            value = data,
-            onValueChange = { data = it },
+            value = treinoToAdd.data.toString(),
+            onValueChange = { treinoToAdd.data = Date(it) },
             label = { Text("Data do Treino") },
             trailingIcon = {
                 Icon(
@@ -133,7 +132,7 @@ fun AddingTraining(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
         // Lista de Exercícios com Checkboxes
         LazyColumn {
             itemsIndexed(exercicios) { _, exercicio ->
-                val isChecked = !exercicios.contains(exercicio)
+                val isChecked = treinoToAdd.exercicios.contains(exercicio)
                 var checkboxState by remember { mutableStateOf(isChecked) }
 
                 Row(
@@ -145,6 +144,11 @@ fun AddingTraining(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
                         checked = checkboxState,
                         onCheckedChange = {
                             checkboxState = it
+                            treinoToAdd.exercicios = if (it) {
+                                treinoToAdd.exercicios + exercicio
+                            } else {
+                                treinoToAdd.exercicios - exercicio
+                            }
                         },
                         modifier = Modifier
                             .align(Alignment.CenterVertically)

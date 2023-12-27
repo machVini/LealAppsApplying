@@ -1,6 +1,6 @@
 package com.br.lealapps.domain.usecase
 
-import com.br.lealapps.domain.model.RepositoryResult
+import com.br.lealapps.data.source.model.result.RepositoryResult
 import com.google.firebase.auth.FirebaseUser
 
 interface SignInUseCase {

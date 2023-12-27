@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.br.lealapps.data.source.model.Exercicio
+import com.br.lealapps.domain.model.Exercicio
 import com.br.lealapps.presentation.screen.common.CommonNavigationBar
 import com.br.lealapps.presentation.screen.common.ComposableAlertExclusion
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
