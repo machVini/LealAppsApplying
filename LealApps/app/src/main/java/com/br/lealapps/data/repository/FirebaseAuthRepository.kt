@@ -1,11 +1,10 @@
 package com.br.lealapps.data.repository
 
-import com.br.lealapps.data.source.remote.AuthDataSource
 import com.br.lealapps.data.source.model.result.RepositoryResult
+import com.br.lealapps.data.source.remote.AuthDataSource
 import com.google.firebase.auth.FirebaseUser
-import javax.inject.Inject
 
-class FirebaseAuthRepository @Inject constructor(
+class FirebaseAuthRepository (
     private val dataSource: AuthDataSource,
 ) : AuthRepository {
     override suspend fun signIn(email: String, password: String): RepositoryResult<FirebaseUser> {

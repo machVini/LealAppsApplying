@@ -2,16 +2,12 @@ package com.br.lealapps.data.source.remote
 
 import com.br.lealapps.data.source.model.error.AuthError
 import com.br.lealapps.data.source.model.result.RepositoryResult
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
-class FirebaseAuthService @Inject constructor(
+class FirebaseAuthService (
     private val firebaseAuth: FirebaseAuth
 ) : AuthDataSource {
 

@@ -8,9 +8,8 @@ import com.br.lealapps.data.source.model.result.RepositoryResult
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
-class FirestoreFitnessService @Inject constructor(
+class FirestoreFitnessService (
     private val firestore: FirebaseFirestore
 ) : FitnessDataSource {
     override suspend fun addTreino(treino: TreinoResponse): RepositoryResult<Unit> {

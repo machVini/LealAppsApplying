@@ -8,7 +8,7 @@ import com.google.firebase.firestore.DocumentReference
 import kotlinx.parcelize.RawValue
 import javax.inject.Inject
 
-class FitnessResponseMapperImpl @Inject constructor() : FitnessResponseMapper {
+class FitnessResponseMapperImpl : FitnessResponseMapper {
 
     override suspend fun mapTreinoFromResponse(response: TreinoResponse, exercicios: List<Exercicio>): Treino {
         return Treino(

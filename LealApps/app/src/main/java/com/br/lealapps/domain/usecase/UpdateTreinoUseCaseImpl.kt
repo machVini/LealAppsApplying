@@ -1,12 +1,10 @@
 package com.br.lealapps.domain.usecase
 
 import com.br.lealapps.data.repository.FitnessRepository
-import com.br.lealapps.data.source.remote.FitnessDataSource
-import com.br.lealapps.domain.model.Treino
 import com.br.lealapps.data.source.model.result.RepositoryResult
-import javax.inject.Inject
+import com.br.lealapps.domain.model.Treino
 
-class UpdateTreinoUseCaseImpl @Inject constructor(
+class UpdateTreinoUseCaseImpl (
     private val repository: FitnessRepository
 ) : UpdateTreinoUseCase {
     override suspend operator fun invoke(treino: Treino): RepositoryResult<Unit> {

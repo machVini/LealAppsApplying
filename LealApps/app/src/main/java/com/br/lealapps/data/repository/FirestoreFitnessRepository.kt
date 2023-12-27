@@ -1,14 +1,13 @@
 package com.br.lealapps.data.repository
 
+import com.br.lealapps.data.source.model.result.RepositoryResult
 import com.br.lealapps.data.source.remote.FitnessDataSource
+import com.br.lealapps.domain.mapper.FitnessResponseMapper
 import com.br.lealapps.domain.model.Exercicio
 import com.br.lealapps.domain.model.Treino
-import com.br.lealapps.data.source.model.result.RepositoryResult
-import com.br.lealapps.domain.mapper.FitnessResponseMapper
 import com.google.firebase.firestore.DocumentReference
-import javax.inject.Inject
 
-class FirestoreFitnessRepository @Inject constructor(
+class FirestoreFitnessRepository (
     private val dataSource: FitnessDataSource,
     private val fitnessResponseMapper: FitnessResponseMapper,
 ) : FitnessRepository {

@@ -9,12 +9,10 @@ import com.br.lealapps.data.source.model.result.RepositoryResult
 import com.br.lealapps.domain.usecase.SignInUseCase
 import com.br.lealapps.domain.usecase.SignUpUseCase
 import com.google.firebase.auth.FirebaseUser
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class AuthViewModel @Inject constructor(
+
+class AuthViewModel (
     private val signUpUseCase: SignUpUseCase,
     private val signInUseCase: SignInUseCase,
 ) : ViewModel() {

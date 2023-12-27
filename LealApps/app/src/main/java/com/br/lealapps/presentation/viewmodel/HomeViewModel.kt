@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.br.lealapps.data.source.model.result.RepositoryResult
-import com.br.lealapps.domain.usecase.GetExercicioByDocRefUseCase
 import com.br.lealapps.domain.model.Exercicio
 import com.br.lealapps.domain.model.Treino
 import com.br.lealapps.domain.usecase.AddExercicioUseCase
@@ -18,15 +17,13 @@ import com.br.lealapps.domain.usecase.GetExerciciosUseCase
 import com.br.lealapps.domain.usecase.GetTreinosUseCase
 import com.br.lealapps.domain.usecase.UpdateExercicioUseCase
 import com.br.lealapps.domain.usecase.UpdateTreinoUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+
+class HomeViewModel (
     private val addTreinoUseCase: AddTreinoUseCase,
     private val getTreinosUseCase: GetTreinosUseCase,
     private val updateTreinoUseCase: UpdateTreinoUseCase,
