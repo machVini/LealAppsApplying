@@ -19,11 +19,15 @@ import com.br.lealapps.presentation.screen.HomeNavigation
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
 import com.br.lealapps.presentation.viewmodel.HomeViewModelFactory
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class HomeActivity : ComponentActivity() {
 
     private val repository = FirestoreFitnessRepository(
-        dataSource = FirestoreFitnessService(FirebaseFirestore.getInstance()),
+        dataSource = FirestoreFitnessService(
+            firestore = FirebaseFirestore.getInstance(),
+            storage = FirebaseStorage.getInstance()
+        ),
         fitnessResponseMapper = FitnessResponseMapperImpl()
     )
     private val viewModel: HomeViewModel by viewModels {

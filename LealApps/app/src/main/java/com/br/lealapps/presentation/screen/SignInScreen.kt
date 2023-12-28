@@ -1,6 +1,7 @@
 package com.br.lealapps.presentation.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -55,14 +57,14 @@ import androidx.navigation.NavController
 import com.br.lealapps.R
 import com.br.lealapps.presentation.viewmodel.AuthViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     Box(
         modifier = Modifier
@@ -73,7 +75,10 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .padding(16.dp),
+                .padding(16.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures { keyboardController?.hide() }
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -156,7 +161,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
             Button(
                 onClick = {
                     viewModel.signIn(email.trim(), password)
-                    hideKeyboard(context = context)
+                    keyboardController?.hide()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -192,15 +197,6 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
             )
         }
     }
-}
-
-fun hideKeyboard(context: android.content.Context) {
-    val inputMethodManager =
-        context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as? android.view.inputmethod.InputMethodManager
-    inputMethodManager?.hideSoftInputFromWindow(
-        (context as? android.app.Activity)?.currentFocus?.windowToken,
-        0
-    )
 }
 
 

@@ -50,5 +50,6 @@ fun HomeNavigation(viewModel: HomeViewModel) {
             }
         }
         composable("exercisesScreen") { ExercisesScreen(navController, viewModel) }
+        composable("addExerciseScreen") { AddExerciseScreen(navController, viewModel) }
     }
 }

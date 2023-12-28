@@ -2,7 +2,6 @@ package com.br.lealapps.presentation.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -26,8 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,11 +37,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.br.lealapps.domain.model.Exercicio
 import com.br.lealapps.domain.model.Treino
 import com.br.lealapps.domain.utils.toTreinoDetailData
 import com.br.lealapps.presentation.screen.common.CommonNavigationBar
+import com.br.lealapps.presentation.screen.common.CommonTopBar
 import com.br.lealapps.presentation.screen.common.ComposableAlertExclusion
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
 
@@ -63,13 +60,9 @@ fun TrainingDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Detalhes do Treino") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
+            CommonTopBar(
+                title = "Detalhes do Treino",
+                navController = navController,
                 actions = {
                     IconButton(onClick = { expanded = true }) {
                         Icon(imageVector = Icons.Default.MoreVert, contentDescription = "Options")
@@ -105,14 +98,7 @@ fun TrainingDetailScreen(
                             }
                         )
                     }
-                },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.primary,
-                    actionIconContentColor = MaterialTheme.colorScheme.primary,
-                ),
-            )
+                })
         },
         content = {
             TreinoDetailInfoItem(treino = treino, viewModel)
@@ -165,30 +151,27 @@ fun TreinoDetailInfoItem(treino: Treino, viewModel: HomeViewModel) {
 
             viewModel.setExerciciosState(treino.exercicios)
             val exerciciosState: List<Exercicio> by viewModel.exerciciosState.collectAsState(initial = emptyList())
-            TrainingDetailExerciciosList(exerciciosState, viewModel)
+            TrainingDetailExerciciosList(exerciciosState)
         }
     }
 }
 
 @Composable
-fun TrainingDetailExerciciosList(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
-    LazyColumn() {
+fun TrainingDetailExerciciosList(exercicios: List<Exercicio>) {
+    LazyColumn {
         itemsIndexed(exercicios) { _, exercicio ->
-            TrainingDetailExercicioItem(exercicio, onExercicioClick = { exercicioAtualizado ->
-                viewModel.load()
-            })
+            TrainingDetailExercicioItem(exercicio)
         }
     }
 }
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun TrainingDetailExercicioItem(exercicio: Exercicio, onExercicioClick: (Exercicio) -> Unit) {
+fun TrainingDetailExercicioItem(exercicio: Exercicio) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp, start = 8.dp, end = 8.dp)
-            .clickable { onExercicioClick(exercicio) }
     ) {
         Spacer(modifier = Modifier.height(12.dp))
         Divider(color = MaterialTheme.colorScheme.primary, thickness = 1.dp)
@@ -200,12 +183,10 @@ fun TrainingDetailExercicioItem(exercicio: Exercicio, onExercicioClick: (Exercic
                 fontSize = 18.sp,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            //Image(painter = , contentDescription = )
-            //Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Obs: ${exercicio.observacoes}", fontSize = 14.sp)
             Spacer(modifier = Modifier.height(8.dp))
             exercicio.imagem.let { imageUrl ->
-                val painter = rememberImagePainter(imageUrl)
+                val painter = rememberAsyncImagePainter(imageUrl)
                 Image(
                     painter = painter,
                     contentDescription = "Imagem do exercício",
