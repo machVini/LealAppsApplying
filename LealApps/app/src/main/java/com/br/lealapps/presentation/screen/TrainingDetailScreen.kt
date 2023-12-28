@@ -29,7 +29,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -82,6 +81,7 @@ fun TrainingDetailScreen(
                         DropdownMenuItem(
                             onClick = {
                                 expanded = false
+                                navController.navigate("editTrainingScreen/${treino.nome}")
                             },
                             text = { Text(text = "Editar Treino") },
                             leadingIcon = {
@@ -139,6 +139,7 @@ fun TrainingDetailScreen(
 
 @Composable
 fun TreinoDetailInfoItem(treino: Treino, viewModel: HomeViewModel) {
+    viewModel.load()
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,8 +175,7 @@ fun TrainingDetailExerciciosList(exercicios: List<Exercicio>, viewModel: HomeVie
     LazyColumn() {
         itemsIndexed(exercicios) { _, exercicio ->
             TrainingDetailExercicioItem(exercicio, onExercicioClick = { exercicioAtualizado ->
-                viewModel.loadExercicios()
-                viewModel.loadTreinos()
+                viewModel.load()
             })
         }
     }

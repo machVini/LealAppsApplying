@@ -78,7 +78,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
 
 @Composable
 fun TreinosList(viewModel: HomeViewModel, navController: NavController) {
-    viewModel.loadTreinos()
+    viewModel.load()
     val treinos by viewModel.treinos.collectAsState(emptyList())
 
     LazyColumn(
@@ -140,6 +140,7 @@ fun TreinoItem(treino: Treino, navController: NavController, viewModel: HomeView
                             DropdownMenuItem(
                                 onClick = {
                                     expanded = false
+                                    navController.navigate("editTrainingScreen/${treino.nome}")
                                 },
                                 text = { Text(text = "Editar") },
                                 leadingIcon = {

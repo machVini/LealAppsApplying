@@ -8,7 +8,7 @@ import com.google.firebase.firestore.DocumentReference
 interface FitnessRepository {
     suspend fun addTreino(treino: Treino): RepositoryResult<Unit>
     suspend fun getTreinos(): RepositoryResult<List<Treino>>
-    suspend fun updateTreino(treino: Treino): RepositoryResult<Unit>
+    suspend fun updateTreino(treinoAntigoName: String, treinoNovo: Treino): RepositoryResult<Unit>
     suspend fun deleteTreino(treinoName: String): RepositoryResult<Unit>
 
     suspend fun addExercicio(exercicio: Exercicio): RepositoryResult<Unit>

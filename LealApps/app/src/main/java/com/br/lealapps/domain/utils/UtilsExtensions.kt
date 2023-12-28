@@ -1,10 +1,5 @@
 package com.br.lealapps.domain.utils
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -21,6 +16,16 @@ fun Date?.toTreinoDetailData(): String {
         else -> DiaDaSemana.DOMINGO.nome
     }
     return "$weekDay - ${this?.date}/${this?.month?.plus(1)}/${this?.year?.plus(1900)}"
+}
+fun Date.toBrazilianDateFormat(
+    pattern: String = "dd/MM/yyyy"
+): String {
+    val formatter = SimpleDateFormat(
+        pattern, Locale("pt-br")
+    ).apply {
+        timeZone = TimeZone.getTimeZone("GMT")
+    }
+    return formatter.format(this)
 }
 
 fun Long.toBrazilianDateFormat(

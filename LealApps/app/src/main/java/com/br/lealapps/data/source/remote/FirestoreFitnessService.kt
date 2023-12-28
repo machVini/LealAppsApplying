@@ -34,14 +34,40 @@ class FirestoreFitnessService (
         }
     }
 
-    override suspend fun updateTreino(treino: TreinoResponse): RepositoryResult<Unit> {
+    override suspend fun updateTreino(treinoAntigoName: String, treinoNovo: TreinoResponse): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Treino").document(treino.nome).set(treino).await()
+            Log.d(TAG, "Attempting to add treino: $treinoAntigoName")
+
+            // Realiza a consulta com o valor antigo do nome
+            val querySnapshot = firestore.collection("Treino")
+                .whereEqualTo("nome", treinoAntigoName)
+                .get()
+                .await()
+
+            Log.d(TAG, "Treino achado: ${querySnapshot.size()} documentos")
+
+            if (!querySnapshot.isEmpty) {
+                // Atualiza o documento utilizando o valor antigo do nome
+                val documentReference = querySnapshot.documents[0].reference
+                documentReference.update(
+                    "nome", treinoNovo.nome,
+                    "descricao", treinoNovo.descricao,
+                    "data", treinoNovo.data,
+                    "exercicios", treinoNovo.exercicios,
+                ).await()
+
+                Log.d(TAG, "Treino updated successfully.")
+            } else {
+                Log.d(TAG, "Treino not found for updating.")
+            }
+
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
+            Log.e(TAG, "Error updating treino: ${treinoNovo.nome}", e)
             RepositoryResult.Error(e)
         }
     }
+
 
     override suspend fun deleteTreino(treinoName: String): RepositoryResult<Unit> {
         return try {

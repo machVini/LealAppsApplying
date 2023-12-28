@@ -112,8 +112,7 @@ fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel) {
             .fillMaxWidth()
             .padding(8.dp)
             .clickable {
-                viewModel.loadExercicios()
-                viewModel.loadTreinos()
+                viewModel.load()
             },
     ) {
         Box(

@@ -4,5 +4,5 @@ import com.br.lealapps.domain.model.Treino
 import com.br.lealapps.data.source.model.result.RepositoryResult
 
 interface UpdateTreinoUseCase {
-    suspend operator fun invoke(treino: Treino): RepositoryResult<Unit>
+    suspend operator fun invoke(treinoAntigoName: String, treinoNovo: Treino): RepositoryResult<Unit>
 }

@@ -44,9 +44,12 @@ class HomeViewModel (
 
     init {
         viewModelScope.launch {
-            loadTreinos()
-            loadExercicios()
+            load()
         }
+    }
+    fun load(){
+        loadTreinos()
+        loadExercicios()
     }
 
     fun setExerciciosState(exercicios: List<Exercicio>) {
@@ -62,7 +65,7 @@ class HomeViewModel (
         }
     }
 
-    fun loadTreinos() {
+    private fun loadTreinos() {
         viewModelScope.launch {
             when (val result = getTreinosUseCase()) {
                 is RepositoryResult.Success -> _treinos.value = result.data.sortedBy { it.data }
@@ -71,9 +74,9 @@ class HomeViewModel (
         }
     }
 
-    fun updateTreino(treino: Treino) {
+    fun updateTreino(treinoAntigoName: String, treinoNovo: Treino) {
         viewModelScope.launch {
-            updateTreinoUseCase(treino)
+            updateTreinoUseCase(treinoAntigoName, treinoNovo)
             loadTreinos()
         }
     }
@@ -94,7 +97,7 @@ class HomeViewModel (
         }
     }
 
-    fun loadExercicios() {
+    private fun loadExercicios() {
         viewModelScope.launch {
             when (val result = getExerciciosUseCase()) {
                 is RepositoryResult.Success -> _exercicios.value = result.data.sortedBy { it.nome.uppercase() }
@@ -128,6 +131,6 @@ class HomeViewModel (
     }
 
     fun getTreinoByName(treinoName: String): Treino? {
-        return _treinos.value?.find { it.nome == treinoName }
+        return _treinos.value.find { it.nome == treinoName }
     }
 }

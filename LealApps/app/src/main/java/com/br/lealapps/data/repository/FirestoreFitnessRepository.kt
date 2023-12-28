@@ -41,11 +41,12 @@ class FirestoreFitnessRepository (
     }
 
 
-    override suspend fun updateTreino(treino: Treino): RepositoryResult<Unit> {
+    override suspend fun updateTreino(treinoAntigoName: String, treinoNovo: Treino): RepositoryResult<Unit> {
         return dataSource.updateTreino(
-            fitnessResponseMapper.mapTreinoToResponse(
-                domain = treino,
-                exercicios = mapExercicioListToDocRefList(treino.exercicios)
+            treinoAntigoName = treinoAntigoName,
+            treinoNovo = fitnessResponseMapper.mapTreinoToResponse(
+                domain = treinoNovo,
+                exercicios = mapExercicioListToDocRefList(treinoNovo.exercicios)
             )
         )
     }

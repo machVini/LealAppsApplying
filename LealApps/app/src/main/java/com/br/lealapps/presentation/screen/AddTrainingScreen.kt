@@ -70,7 +70,11 @@ fun AddTrainingScreen(navController: NavController, viewModel: HomeViewModel) {
             )
         },
         content = {
-            AddingTraining(exercicios = exercicios, viewModel = viewModel, navController)
+            CreateOrUpdateTraining(
+                exercicios = exercicios,
+                navController,
+                onSaveClick = { treino -> viewModel.addTreino(treino) }
+            )
         },
         bottomBar = { CommonNavigationBar(navController = navController) },
     )
@@ -78,15 +82,16 @@ fun AddTrainingScreen(navController: NavController, viewModel: HomeViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddingTraining(
+fun CreateOrUpdateTraining(
     exercicios: List<Exercicio>,
-    viewModel: HomeViewModel,
-    navController: NavController
+    navController: NavController,
+    treino: Treino? = null,
+    onSaveClick: (Treino) -> Unit
 ) {
-    var nome by remember { mutableStateOf("") }
-    var descricao by remember { mutableStateOf("") }
-    var data by remember { mutableStateOf("") }
-    var exerciciosSelecionados by remember { mutableStateOf(emptyList<Exercicio>()) }
+    var nome by remember { mutableStateOf(treino?.nome ?: "") }
+    var descricao by remember { mutableStateOf(treino?.descricao ?: "") }
+    var data by remember { mutableStateOf(treino?.data?.toBrazilianDateFormat() ?: "") }
+    var exerciciosSelecionados by remember { mutableStateOf(treino?.exercicios ?: emptyList()) }
     val context = LocalContext.current
     var showDatePickerDialog by remember {
         mutableStateOf(false)
@@ -197,7 +202,7 @@ fun AddingTraining(
         }
         Button(
             onClick = {
-                viewModel.addTreino(
+                onSaveClick(
                     Treino(
                         nome = nome,
                         descricao = descricao,
