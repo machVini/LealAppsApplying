@@ -1,6 +1,9 @@
 package com.br.lealapps.domain.utils
 
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 fun Date?.toTreinoDetailData(): String {
     val weekDay = when (this?.day) {
@@ -13,6 +16,37 @@ fun Date?.toTreinoDetailData(): String {
         else -> DiaDaSemana.DOMINGO.nome
     }
     return "$weekDay - ${this?.date}/${this?.month?.plus(1)}/${this?.year?.plus(1900)}"
+}
+fun Date.toBrazilianDateFormat(
+    pattern: String = "dd/MM/yyyy"
+): String {
+    val formatter = SimpleDateFormat(
+        pattern, Locale("pt-br")
+    ).apply {
+        timeZone = TimeZone.getTimeZone("GMT")
+    }
+    return formatter.format(this)
+}
+
+fun Long.toBrazilianDateFormat(
+    pattern: String = "dd/MM/yyyy"
+): String {
+    val date = Date(this)
+    val formatter = SimpleDateFormat(
+        pattern, Locale("pt-br")
+    ).apply {
+        timeZone = TimeZone.getTimeZone("GMT")
+    }
+    return formatter.format(date)
+}
+
+fun String.toBrazilianDate(
+    pattern: String = "dd/MM/yyyy"
+): Date {
+    val formatter = SimpleDateFormat(
+        pattern, Locale("pt-br")
+    )
+    return formatter.parse(this)!!
 }
 
 enum class DiaDaSemana(val nome: String){

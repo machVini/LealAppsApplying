@@ -2,7 +2,6 @@ package com.br.lealapps.presentation.screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,11 +17,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +30,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.br.lealapps.domain.model.Exercicio
 import com.br.lealapps.presentation.screen.common.CommonNavigationBar
 import com.br.lealapps.presentation.screen.common.ComposableAlertExclusion
@@ -60,19 +58,14 @@ fun ExercisesScreen(navController: NavController, viewModel: HomeViewModel) {
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Lista de Exercícios") },
+            CenterAlignedTopAppBar(
+                title = { Text("Exercícios") },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                     navigationIconContentColor = MaterialTheme.colorScheme.primary,
                     actionIconContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
                 actions = {
                     IconButton(onClick = { navController.navigate("addExerciseScreen") }) {
                         Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
@@ -81,21 +74,26 @@ fun ExercisesScreen(navController: NavController, viewModel: HomeViewModel) {
             )
         },
         content = {
-            ExerciciosList(exercicios = exercicios, viewModel = viewModel)
+            ExerciciosList(exercicios = exercicios, viewModel = viewModel, navController = navController)
         },
         bottomBar = { CommonNavigationBar(navController = navController) }
     )
 }
 
 @Composable
-fun ExerciciosList(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
+fun ExerciciosList(
+    exercicios: List<Exercicio>,
+    viewModel: HomeViewModel,
+    navController: NavController,
+) {
+    viewModel.load()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 72.dp)
     ) {
         itemsIndexed(exercicios) { _, exercicio ->
-            ExercicioItem(exercicio, viewModel)
+            ExercicioItem(exercicio, viewModel, navController)
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
@@ -103,18 +101,14 @@ fun ExerciciosList(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel) {
+fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel, navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .clickable {
-                viewModel.loadExercicios()
-                viewModel.loadTreinos()
-            },
+            .padding(8.dp),
     ) {
         Box(
             modifier = Modifier
@@ -124,7 +118,7 @@ fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 exercicio.imagem.let { imageUrl ->
-                    val painter = rememberImagePainter(imageUrl)
+                    val painter = rememberAsyncImagePainter(imageUrl)
                     Image(
                         painter = painter,
                         contentDescription = "Imagem do exercício",
@@ -163,6 +157,7 @@ fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel) {
                         ) {
                             DropdownMenuItem(
                                 onClick = {
+                                    navController.navigate("editExerciseScreen/${exercicio.nome}")
                                     expanded = false
                                 },
                                 text = { Text(text = "Editar") },

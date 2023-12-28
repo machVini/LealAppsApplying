@@ -1,20 +1,23 @@
 package com.br.lealapps.data.source.remote
 
 import android.content.ContentValues.TAG
+import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.br.lealapps.data.source.model.ExercicioResponse
 import com.br.lealapps.data.source.model.TreinoResponse
 import com.br.lealapps.data.source.model.result.RepositoryResult
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.tasks.await
 
-class FirestoreFitnessService (
-    private val firestore: FirebaseFirestore
+class FirestoreFitnessService(
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage,
 ) : FitnessDataSource {
     override suspend fun addTreino(treino: TreinoResponse): RepositoryResult<Unit> {
         return try {
-            Log.d(TAG, "Attempting to add treino: $treino")
             firestore.collection("Treino").add(treino).await()
             Log.d(TAG, "Treino added successfully.")
             RepositoryResult.Success(Unit)
@@ -34,14 +37,33 @@ class FirestoreFitnessService (
         }
     }
 
-    override suspend fun updateTreino(treino: TreinoResponse): RepositoryResult<Unit> {
+    override suspend fun updateTreino(
+        treinoAntigoName: String,
+        treinoNovo: TreinoResponse
+    ): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Treino").document(treino.nome).set(treino).await()
+            val querySnapshot = firestore.collection("Treino")
+                .whereEqualTo("nome", treinoAntigoName)
+                .get()
+                .await()
+
+            if (!querySnapshot.isEmpty) {
+                val documentReference = querySnapshot.documents[0].reference
+                documentReference.update(
+                    "nome", treinoNovo.nome,
+                    "descricao", treinoNovo.descricao,
+                    "data", treinoNovo.data,
+                    "exercicios", treinoNovo.exercicios,
+                ).await()
+                Log.d(TAG, "Treino updated successfully.")
+            }
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
+            Log.e(TAG, "Error updating treino: ${treinoNovo.nome}", e)
             RepositoryResult.Error(e)
         }
     }
+
 
     override suspend fun deleteTreino(treinoName: String): RepositoryResult<Unit> {
         return try {
@@ -68,8 +90,13 @@ class FirestoreFitnessService (
 
     override suspend fun addExercicio(exercicio: ExercicioResponse): RepositoryResult<Unit> {
         return try {
-            Log.d(TAG, "Attempting to add exercicio: $exercicio")
-            firestore.collection("Exercicio").add(exercicio).await()
+            val imagemUrl = uploadImage(exercicio.imagem.toUri())
+
+            val exercicioToAdd = exercicio.copy(
+                imagem = imagemUrl
+            )
+
+            firestore.collection("Exercicio").add(exercicioToAdd).await()
             Log.d(TAG, "Exercicio added successfully.")
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
@@ -88,12 +115,34 @@ class FirestoreFitnessService (
         }
     }
 
-    override suspend fun updateExercicio(exercicio: ExercicioResponse): RepositoryResult<Unit> {
+    override suspend fun updateExercicio(
+        exercicioAntigoName: String,
+        exercicioNovo: ExercicioResponse
+    ): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Exercicio").document(exercicio.nome).set(exercicio)
+            val imagemUrl = uploadImage(exercicioNovo.imagem.toUri())
+
+            val exercicioToUpdate = exercicioNovo.copy(
+                imagem = imagemUrl
+            )
+
+            val querySnapshot = firestore.collection("Exercicio")
+                .whereEqualTo("nome", exercicioAntigoName)
+                .get()
                 .await()
+
+            if (!querySnapshot.isEmpty) {
+                val documentReference = querySnapshot.documents[0].reference
+                documentReference.update(
+                    "nome", exercicioToUpdate.nome,
+                    "imagem", exercicioToUpdate.imagem,
+                    "observacoes", exercicioToUpdate.observacoes
+                ).await()
+                Log.d(TAG, "Exercicio updated successfully.")
+            }
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
+            Log.e(TAG, "Error updating exercicio: ${exercicioNovo.nome}", e)
             RepositoryResult.Error(e)
         }
     }
@@ -139,4 +188,22 @@ class FirestoreFitnessService (
             null
         }
     }
+
+    private suspend fun uploadImage(imagemUri: Uri): String {
+        return try {
+            val storageRef = storage.reference
+            val imageRef = storageRef.child("exercicios/${imagemUri.lastPathSegment}")
+
+            val uploadTask = imageRef.putFile(imagemUri).await()
+            if (uploadTask.task.isSuccessful) {
+                val downloadUrl = imageRef.downloadUrl.await()
+                downloadUrl.toString()
+            } else {
+                imagemUri.toString()
+            }
+        } catch (e: Exception) {
+            imagemUri.toString()
+        }
+    }
+
 }

@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 
-class HomeViewModel (
+class HomeViewModel(
     private val addTreinoUseCase: AddTreinoUseCase,
     private val getTreinosUseCase: GetTreinosUseCase,
     private val updateTreinoUseCase: UpdateTreinoUseCase,
@@ -44,9 +44,13 @@ class HomeViewModel (
 
     init {
         viewModelScope.launch {
-            loadTreinos()
-            loadExercicios()
+            load()
         }
+    }
+
+    fun load() {
+        loadTreinos()
+        loadExercicios()
     }
 
     fun setExerciciosState(exercicios: List<Exercicio>) {
@@ -62,7 +66,7 @@ class HomeViewModel (
         }
     }
 
-    fun loadTreinos() {
+    private fun loadTreinos() {
         viewModelScope.launch {
             when (val result = getTreinosUseCase()) {
                 is RepositoryResult.Success -> _treinos.value = result.data.sortedBy { it.data }
@@ -71,9 +75,9 @@ class HomeViewModel (
         }
     }
 
-    fun updateTreino(treino: Treino) {
+    fun updateTreino(treinoAntigoName: String, treinoNovo: Treino) {
         viewModelScope.launch {
-            updateTreinoUseCase(treino)
+            updateTreinoUseCase(treinoAntigoName, treinoNovo)
             loadTreinos()
         }
     }
@@ -94,10 +98,12 @@ class HomeViewModel (
         }
     }
 
-    fun loadExercicios() {
+    private fun loadExercicios() {
         viewModelScope.launch {
             when (val result = getExerciciosUseCase()) {
-                is RepositoryResult.Success -> _exercicios.value = result.data.sortedBy { it.nome.uppercase() }
+                is RepositoryResult.Success -> _exercicios.value =
+                    result.data.sortedBy { it.nome.uppercase() }
+
                 is RepositoryResult.Error -> Log.e(
                     TAG,
                     "Error loading exercicios",
@@ -107,16 +113,10 @@ class HomeViewModel (
         }
     }
 
-    fun updateExercicio(exercicio: Exercicio) {
+    fun updateExercicio(exercicioAntigoName: String, exercicioNovo: Exercicio) {
         viewModelScope.launch {
-            when (val result = updateExercicioUseCase(exercicio)) {
-                is RepositoryResult.Success -> loadExercicios() // Recarregar a lista após atualizar
-                is RepositoryResult.Error -> Log.e(
-                    TAG,
-                    "Error updating exercicio",
-                    result.exception
-                )
-            }
+            updateExercicioUseCase(exercicioAntigoName, exercicioNovo)
+            loadExercicios()
         }
     }
 
@@ -128,6 +128,10 @@ class HomeViewModel (
     }
 
     fun getTreinoByName(treinoName: String): Treino? {
-        return _treinos.value?.find { it.nome == treinoName }
+        return _treinos.value.find { it.nome == treinoName }
+    }
+
+    fun getExercicioByName(exercicioName: String): Exercicio? {
+        return _exercicios.value?.find { it.nome == exercicioName }
     }
 }
