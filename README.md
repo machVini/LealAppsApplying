@@ -4,14 +4,14 @@ O projeto, é um aplicativo que lista, edita, deleta e cria treinos e exercício
 
 ## Status do Projeto
 
-O projeto está em desenvolvimento.
+O projeto está em desenvolvimento, em fase de adição de DI com o Dagger-Hilt
 
 ## Capturas de Tela
 
-![Lista de Treinos](file:///home/vini/Downloads/Screenshot_2023-12-28-20-22-05-804_com.br.lealapps.jpg)
-![Detalhes](file:///home/vini/Downloads/Screenshot_2023-12-28-20-24-32-254_com.br.lealapps.jpg)
-![Editar](file:///home/vini/Downloads/Screenshot_2023-12-28-20-24-21-544_com.br.lealapps.jpg)
-![Lista de exercícios](file:///home/vini/Downloads/Screenshot_2023-12-28-20-24-32-254_com.br.lealapps.jpg)
+![](file:///home/vini/Downloads/Screenshot_2023-12-28-20-22-05-804_com.br.lealapps.jpg)
+![](file:///home/vini/Downloads/Screenshot_2023-12-28-20-24-32-254_com.br.lealapps.jpg)
+![](file:///home/vini/Downloads/Screenshot_2023-12-28-20-24-21-544_com.br.lealapps.jpg)
+![](file:///home/vini/Downloads/Screenshot_2023-12-28-20-24-32-254_com.br.lealapps.jpg)
 
 ## Tecnologias Utilizadas
 
