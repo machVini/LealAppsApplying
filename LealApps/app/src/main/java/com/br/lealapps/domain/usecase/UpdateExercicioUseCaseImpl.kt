@@ -4,11 +4,14 @@ import com.br.lealapps.data.repository.FitnessRepository
 import com.br.lealapps.data.source.model.result.RepositoryResult
 import com.br.lealapps.domain.model.Exercicio
 
-class UpdateExercicioUseCaseImpl (
+class UpdateExercicioUseCaseImpl(
     private val repository: FitnessRepository
 ) : UpdateExercicioUseCase {
-    override suspend operator fun invoke(exercicio: Exercicio): RepositoryResult<Unit> {
-        return repository.updateExercicio(exercicio)
+    override suspend operator fun invoke(
+        exercicioAntigoName: String,
+        exercicioNovo: Exercicio
+    ): RepositoryResult<Unit> {
+        return repository.updateExercicio(exercicioAntigoName, exercicioNovo)
     }
 
 }

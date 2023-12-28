@@ -13,7 +13,7 @@ interface FitnessRepository {
 
     suspend fun addExercicio(exercicio: Exercicio): RepositoryResult<Unit>
     suspend fun getExercicios(): RepositoryResult<List<Exercicio>>
-    suspend fun updateExercicio(exercicio: Exercicio): RepositoryResult<Unit>
+    suspend fun updateExercicio(exercicioAntigoName: String, exercicioNovo: Exercicio): RepositoryResult<Unit>
     suspend fun deleteExercicio(exercicioName: String): RepositoryResult<Unit>
     suspend fun getDocReferenceByName(exercicioName: String): DocumentReference?
     suspend fun getExercicioByDocRef(docRef: DocumentReference): Exercicio?

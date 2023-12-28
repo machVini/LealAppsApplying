@@ -7,7 +7,7 @@ import com.br.lealapps.domain.model.Exercicio
 import com.br.lealapps.domain.model.Treino
 import com.google.firebase.firestore.DocumentReference
 
-class FirestoreFitnessRepository (
+class FirestoreFitnessRepository(
     private val dataSource: FitnessDataSource,
     private val fitnessResponseMapper: FitnessResponseMapper,
 ) : FitnessRepository {
@@ -41,7 +41,10 @@ class FirestoreFitnessRepository (
     }
 
 
-    override suspend fun updateTreino(treinoAntigoName: String, treinoNovo: Treino): RepositoryResult<Unit> {
+    override suspend fun updateTreino(
+        treinoAntigoName: String,
+        treinoNovo: Treino
+    ): RepositoryResult<Unit> {
         return dataSource.updateTreino(
             treinoAntigoName = treinoAntigoName,
             treinoNovo = fitnessResponseMapper.mapTreinoToResponse(
@@ -76,8 +79,14 @@ class FirestoreFitnessRepository (
         }
     }
 
-    override suspend fun updateExercicio(exercicio: Exercicio): RepositoryResult<Unit> {
-        return dataSource.updateExercicio(fitnessResponseMapper.mapExercicioToResponse(exercicio))
+    override suspend fun updateExercicio(
+        exercicioAntigoName: String,
+        exercicioNovo: Exercicio
+    ): RepositoryResult<Unit> {
+        return dataSource.updateExercicio(
+            exercicioAntigoName = exercicioAntigoName,
+            exercicioNovo = fitnessResponseMapper.mapExercicioToResponse(exercicioNovo),
+        )
     }
 
     override suspend fun deleteExercicio(exercicioName: String): RepositoryResult<Unit> {

@@ -74,14 +74,18 @@ fun ExercisesScreen(navController: NavController, viewModel: HomeViewModel) {
             )
         },
         content = {
-            ExerciciosList(exercicios = exercicios, viewModel = viewModel)
+            ExerciciosList(exercicios = exercicios, viewModel = viewModel, navController = navController)
         },
         bottomBar = { CommonNavigationBar(navController = navController) }
     )
 }
 
 @Composable
-fun ExerciciosList(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
+fun ExerciciosList(
+    exercicios: List<Exercicio>,
+    viewModel: HomeViewModel,
+    navController: NavController,
+) {
     viewModel.load()
     LazyColumn(
         modifier = Modifier
@@ -89,7 +93,7 @@ fun ExerciciosList(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
             .padding(horizontal = 16.dp, vertical = 72.dp)
     ) {
         itemsIndexed(exercicios) { _, exercicio ->
-            ExercicioItem(exercicio, viewModel)
+            ExercicioItem(exercicio, viewModel, navController)
             Spacer(modifier = Modifier.height(4.dp))
         }
     }
@@ -97,7 +101,7 @@ fun ExerciciosList(exercicios: List<Exercicio>, viewModel: HomeViewModel) {
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel) {
+fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel, navController: NavController) {
     var expanded by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -153,6 +157,7 @@ fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel) {
                         ) {
                             DropdownMenuItem(
                                 onClick = {
+                                    navController.navigate("editExerciseScreen/${exercicio.nome}")
                                     expanded = false
                                 },
                                 text = { Text(text = "Editar") },

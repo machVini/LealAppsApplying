@@ -115,12 +115,34 @@ class FirestoreFitnessService(
         }
     }
 
-    override suspend fun updateExercicio(exercicio: ExercicioResponse): RepositoryResult<Unit> {
+    override suspend fun updateExercicio(
+        exercicioAntigoName: String,
+        exercicioNovo: ExercicioResponse
+    ): RepositoryResult<Unit> {
         return try {
-            firestore.collection("Exercicio").document(exercicio.nome).set(exercicio)
+            val imagemUrl = uploadImage(exercicioNovo.imagem.toUri())
+
+            val exercicioToUpdate = exercicioNovo.copy(
+                imagem = imagemUrl
+            )
+
+            val querySnapshot = firestore.collection("Exercicio")
+                .whereEqualTo("nome", exercicioAntigoName)
+                .get()
                 .await()
+
+            if (!querySnapshot.isEmpty) {
+                val documentReference = querySnapshot.documents[0].reference
+                documentReference.update(
+                    "nome", exercicioToUpdate.nome,
+                    "imagem", exercicioToUpdate.imagem,
+                    "observacoes", exercicioToUpdate.observacoes
+                ).await()
+                Log.d(TAG, "Exercicio updated successfully.")
+            }
             RepositoryResult.Success(Unit)
         } catch (e: Exception) {
+            Log.e(TAG, "Error updating exercicio: ${exercicioNovo.nome}", e)
             RepositoryResult.Error(e)
         }
     }

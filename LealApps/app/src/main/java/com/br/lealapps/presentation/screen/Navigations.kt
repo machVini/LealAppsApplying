@@ -51,5 +51,16 @@ fun HomeNavigation(viewModel: HomeViewModel) {
         }
         composable("exercisesScreen") { ExercisesScreen(navController, viewModel) }
         composable("addExerciseScreen") { AddExerciseScreen(navController, viewModel) }
+        composable(
+            "editExerciseScreen/{exercicioName}",
+            arguments = listOf(navArgument("exercicioName") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val exercicioName = backStackEntry.arguments?.getString("exercicioName")
+            val exercicio = viewModel.getExercicioByName(exercicioName = exercicioName ?: "")
+
+            if (exercicio != null) {
+                EditExerciseScreen(navController, viewModel, exercicio)
+            }
+        }
     }
 }
