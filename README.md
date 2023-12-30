@@ -26,6 +26,7 @@ O projeto está em desenvolvimento, em fase de adição de DI com o Dagger-Hilt
 - Criar versões únicas de Treinos e Exercícios, atreladas aos usuários únicos.
 - Apagar a imagem do storage ao editar o exercício.
 - Atualizar a tela de detalhes do treino ao editá-lo.
+- Generalizar os componentes do compose
 - Melhorar e controlar a stack de navegação e a criação de instâncias de tela.
 - Adicionar validações mais complexas antes de adicionar ou atualizar um treino/exercício.
 - Implementar um framework de injeção de dependência para controlar as instâncias e diminuir o acoplamento.
