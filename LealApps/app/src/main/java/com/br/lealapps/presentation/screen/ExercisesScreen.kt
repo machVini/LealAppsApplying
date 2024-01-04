@@ -98,7 +98,6 @@ fun ExerciciosList(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ExercicioItem(exercicio: Exercicio, viewModel: HomeViewModel, navController: NavController) {
     var expanded by remember { mutableStateOf(false) }

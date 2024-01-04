@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        viewModel.authenticationState.observe(this, Observer { state ->
+        viewModel.authenticationState.observe(this) { state ->
             when (state) {
                 AuthViewModel.AuthenticationState.AUTHENTICATED -> {
                     val intent = Intent(this, HomeActivity::class.java)
@@ -46,6 +46,6 @@ class MainActivity : ComponentActivity() {
 
                 else -> {}
             }
-        })
+        }
     }
 }

@@ -9,9 +9,7 @@ class SignUpUseCaseImpl (
 ): SignUpUseCase {
     override suspend operator fun invoke(email: String, password: String): RepositoryResult<FirebaseUser> {
         return try {
-            val result = repository.createUser(email, password)
-
-            when (result) {
+            when (val result = repository.createUser(email, password)) {
                 is RepositoryResult.Success -> RepositoryResult.Success(result.data)
                 is RepositoryResult.Error -> RepositoryResult.Error(result.exception)
             }

@@ -13,7 +13,6 @@ import com.br.lealapps.presentation.screen.common.CommonTopBar
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTrainingScreen(navController: NavController, viewModel: HomeViewModel, treino: Treino) {
     val exercicios by viewModel.exercicios.observeAsState(emptyList())

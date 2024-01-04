@@ -47,7 +47,6 @@ import com.br.lealapps.presentation.screen.common.ComposableAlertExclusion
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainingDetailScreen(
     navController: NavController,
@@ -164,7 +163,6 @@ fun TrainingDetailExerciciosList(exercicios: List<Exercicio>) {
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun TrainingDetailExercicioItem(exercicio: Exercicio) {
     Card(

@@ -5,8 +5,6 @@ import com.br.lealapps.data.source.model.TreinoResponse
 import com.br.lealapps.domain.model.Exercicio
 import com.br.lealapps.domain.model.Treino
 import com.google.firebase.firestore.DocumentReference
-import kotlinx.parcelize.RawValue
-import javax.inject.Inject
 
 class FitnessResponseMapperImpl : FitnessResponseMapper {
 

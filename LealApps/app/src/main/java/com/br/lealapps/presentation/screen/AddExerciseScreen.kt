@@ -49,7 +49,6 @@ import com.br.lealapps.presentation.screen.common.CommonTopBar
 import com.br.lealapps.presentation.viewmodel.HomeViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExerciseScreen(navController: NavController, viewModel: HomeViewModel) {
     Scaffold(
@@ -68,7 +67,7 @@ fun AddExerciseScreen(navController: NavController, viewModel: HomeViewModel) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateOrUpdateExercise(
     exercicio: Exercicio? = null,

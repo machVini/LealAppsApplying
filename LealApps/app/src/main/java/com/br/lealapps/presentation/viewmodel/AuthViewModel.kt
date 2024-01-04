@@ -29,8 +29,7 @@ class AuthViewModel (
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             try {
-                val result = signInUseCase(email, password)
-                when (result) {
+                when (val result = signInUseCase(email, password)) {
                     is RepositoryResult.Success -> {
                         _authenticatedUser.value = result.data
                         _authenticationState.value = AuthenticationState.AUTHENTICATED
@@ -50,8 +49,7 @@ class AuthViewModel (
         if (password == confirmPassword) {
             viewModelScope.launch {
                 try {
-                    val result = signUpUseCase(email, password)
-                    when (result) {
+                    when (val result = signUpUseCase(email, password)) {
                         is RepositoryResult.Success -> {
                             _authenticatedUser.value = result.data
                             _authenticationState.value = AuthenticationState.AUTHENTICATED

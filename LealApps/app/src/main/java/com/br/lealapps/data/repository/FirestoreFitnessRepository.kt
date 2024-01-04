@@ -114,7 +114,7 @@ class FirestoreFitnessRepository(
         return exerciciosList
     }
 
-    suspend fun mapExercicioListToDocRefList(
+    private suspend fun mapExercicioListToDocRefList(
         exercicios: List<Exercicio>
     ): List<DocumentReference> {
         val docRefList = mutableListOf<DocumentReference>()

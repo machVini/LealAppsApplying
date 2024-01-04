@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -29,7 +30,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun CommonNavigationBar(navController: NavController) {
-    var selectedItem by remember { mutableStateOf(2) }
+    var selectedItem by remember { mutableIntStateOf(2) }
     val items = listOf("Treinos", "Exercicios")
 
     NavigationBar(
@@ -64,7 +65,7 @@ fun CommonNavigationBar(navController: NavController) {
 fun CommonTopBar(
     title: String,
     navController: NavController,
-    actions: @Composable() (RowScope.() -> Unit) = {},
+    actions: @Composable (RowScope.() -> Unit) = {},
     navigationIconAction: () -> Unit = { navController.popBackStack()},
 ) {
     TopAppBar(

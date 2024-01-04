@@ -53,7 +53,6 @@ import androidx.navigation.NavController
 import com.br.lealapps.R
 import com.br.lealapps.presentation.viewmodel.AuthViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
     var email by remember { mutableStateOf("") }
