@@ -125,7 +125,6 @@ fun TrainingDetailScreen(
 
 @Composable
 fun TreinoDetailInfoItem(treino: Treino, viewModel: HomeViewModel) {
-    viewModel.load()
     Card(
         modifier = Modifier
             .fillMaxWidth()

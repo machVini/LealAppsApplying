@@ -78,7 +78,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
 
 @Composable
 fun TreinosList(viewModel: HomeViewModel, navController: NavController) {
-    viewModel.load()
     val treinos by viewModel.treinos.collectAsState(emptyList())
 
     LazyColumn(

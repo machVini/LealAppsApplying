@@ -48,7 +48,7 @@ class HomeViewModel(
         }
     }
 
-    fun load() {
+    private fun load() {
         loadTreinos()
         loadExercicios()
     }

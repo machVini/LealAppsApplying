@@ -86,7 +86,6 @@ fun ExerciciosList(
     viewModel: HomeViewModel,
     navController: NavController,
 ) {
-    viewModel.load()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
