@@ -61,9 +61,9 @@ fun EditExerciseScreen(
         },
         content = {
             CreateOrUpdateExercise(
-                navController = navController,
                 exercicio = exercicio,
                 onSaveClick = { exercicioNovo ->
+                    navController.popBackStack()
                     viewModel.updateExercicio(
                         exercicioAntigoName = exercicio.nome,
                         exercicioNovo = exercicioNovo

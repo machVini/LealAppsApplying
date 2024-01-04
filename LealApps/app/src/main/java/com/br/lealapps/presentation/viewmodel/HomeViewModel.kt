@@ -78,7 +78,7 @@ class HomeViewModel(
     fun updateTreino(treinoAntigoName: String, treinoNovo: Treino) {
         viewModelScope.launch {
             updateTreinoUseCase(treinoAntigoName, treinoNovo)
-            loadTreinos()
+            load()
         }
     }
 

@@ -24,9 +24,9 @@ fun EditTrainingScreen(navController: NavController, viewModel: HomeViewModel, t
         content = {
             CreateOrUpdateTraining(
                 exercicios = exercicios,
-                navController,
                 treino,
                 onSaveClick = { treinoNovo ->
+                    navController.popBackStack()
                     viewModel.updateTreino(
                         treinoAntigoName = treino.nome,
                         treinoNovo = treinoNovo

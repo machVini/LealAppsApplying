@@ -58,8 +58,10 @@ fun AddExerciseScreen(navController: NavController, viewModel: HomeViewModel) {
         },
         content = {
             CreateOrUpdateExercise(
-                navController,
-                onSaveClick = { exercicio -> viewModel.addExercicio(exercicio) }
+                onSaveClick = { exercicio ->
+                    navController.popBackStack()
+                    viewModel.addExercicio(exercicio)
+                }
             )
         },
         bottomBar = { CommonNavigationBar(navController = navController) },
@@ -69,7 +71,6 @@ fun AddExerciseScreen(navController: NavController, viewModel: HomeViewModel) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun CreateOrUpdateExercise(
-    navController: NavController,
     exercicio: Exercicio? = null,
     onSaveClick: (Exercicio) -> Unit
 ) {
@@ -157,7 +158,6 @@ fun CreateOrUpdateExercise(
                     )
                 )
                 keyboardController?.hide()
-                navController.popBackStack()
             },
             modifier = Modifier
                 .fillMaxWidth()

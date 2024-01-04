@@ -62,8 +62,10 @@ fun AddTrainingScreen(navController: NavController, viewModel: HomeViewModel) {
         content = {
             CreateOrUpdateTraining(
                 exercicios = exercicios,
-                navController,
-                onSaveClick = { treino -> viewModel.addTreino(treino) }
+                onSaveClick = { treino ->
+                    navController.popBackStack()
+                    viewModel.addTreino(treino)
+                }
             )
         },
         bottomBar = { CommonNavigationBar(navController = navController) },
@@ -74,7 +76,6 @@ fun AddTrainingScreen(navController: NavController, viewModel: HomeViewModel) {
 @Composable
 fun CreateOrUpdateTraining(
     exercicios: List<Exercicio>,
-    navController: NavController,
     treino: Treino? = null,
     onSaveClick: (Treino) -> Unit
 ) {
@@ -213,7 +214,6 @@ fun CreateOrUpdateTraining(
                     )
                 )
                 keyboardController?.hide()
-                navController.popBackStack()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
